@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: store
+  datasource:
+    url: jdbc:postgresql://localhost:5432/event_manager?createDatabaseIfNotExist=true
+    username: postgres
+    password: postgres

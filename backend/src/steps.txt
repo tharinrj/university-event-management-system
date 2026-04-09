@@ -1,0 +1,22 @@
+You’re deciding the next backend milestone; I’ll prioritize the highest-impact steps and give a concrete implementation order.
+ Assess current state from your project structure (EventController, EventService, DTO/model present)
+ Rank next work by product value + technical risk reduction
+ Propose an implementation sequence you can ship incrementally
+Based on your current setup, the best next thing to implement is persistence + real CRUD (instead of in-memory-only reads).
+Persistence first (recommended immediate next step)
+Add JPA + DB config in pom.xml and src/main/resources/application.properties.
+Create EventRepository and move storage logic out of in-memory state in src/main/java/com/unievents/backend/events/service/EventService.java.
+Why first: everything else (writes, pagination, reliable tests) becomes meaningful once data persists.
+Add write endpoints
+Implement POST, PUT/PATCH, DELETE in src/main/java/com/unievents/backend/events/controller/EventController.java.
+Add EventCreateRequest and EventUpdateRequest DTOs under src/main/java/com/unievents/backend/events/dto.
+Why second: highest user-facing feature gain.
+Standardize error responses
+Add a @RestControllerAdvice global handler for validation/domain/not-found errors.
+Why third: cleaner controller code and consistent frontend contracts.
+Pagination + sorting for list endpoints
+Add paging params and return paged metadata.
+Why fourth: prevents performance pain early.
+Tests as a safety net
+Controller tests + service tests + repository integration tests.
+Why fifth: enables fast safe refactors.

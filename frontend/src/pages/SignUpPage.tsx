@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { ApiError, signup } from "../api/auth.ts";
 
 interface SignUpFormData {
   fullName: string;
@@ -23,6 +24,8 @@ export default function SignUpPage() {
   const [formData, setFormData] = useState<SignUpFormData>(initialFormData);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverMessage, setServerMessage] = useState<string | null>(null);
 
   const passwordStrength = useMemo(() => {
     const lengthScore = Math.min(40, formData.password.length * 5);
@@ -65,19 +68,54 @@ export default function SignUpPage() {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setServerMessage(null);
 
     if (!validate()) {
       setSubmitted(false);
       return;
     }
 
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      const response = await signup({
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        passwordConfirm: formData.confirmPassword,
+      });
+
+      setErrors({});
+      setSubmitted(true);
+      setServerMessage(`Welcome, ${response.fullName}. Your account was created.`);
+      setFormData(initialFormData);
+    } catch (error) {
+      setSubmitted(false);
+
+      if (error instanceof ApiError) {
+        if (error.fieldErrors.length > 0) {
+          const nextErrors: Record<string, string> = {};
+          for (const fieldError of error.fieldErrors) {
+            if (fieldError.field === "passwordConfirm") {
+              nextErrors.confirmPassword = fieldError.message;
+            } else {
+              nextErrors[fieldError.field] = fieldError.message;
+            }
+          }
+          setErrors((prev) => ({ ...prev, ...nextErrors }));
+        }
+        setServerMessage(error.message);
+      } else {
+        setServerMessage("Unable to create account right now. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.20),_transparent_45%),radial-gradient(circle_at_bottom_left,_rgba(14,165,233,0.18),_transparent_45%)] bg-gray-50 dark:bg-gray-950 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.20),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.18),transparent_45%)] bg-gray-50 dark:bg-gray-950 px-4 py-10 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <section className="rounded-3xl border border-sky-200/60 dark:border-sky-800/50 bg-white/85 dark:bg-gray-900/85 backdrop-blur-md p-8 sm:p-10">
           <a
@@ -219,14 +257,21 @@ export default function SignUpPage() {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3.5 transition-colors"
             >
-              Create account
+              {isSubmitting ? "Creating account..." : "Create account"}
             </button>
 
             {submitted && (
               <p className="rounded-xl border border-emerald-300/70 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
-                Account details look good
+                {serverMessage ?? "Account details look good"}
+              </p>
+            )}
+
+            {!submitted && serverMessage && (
+              <p className="rounded-xl border border-red-300/70 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-800 dark:text-red-300">
+                {serverMessage}
               </p>
             )}
           </form>

@@ -2,17 +2,19 @@ package com.unievents.backend.exception.handler;
 
 import com.unievents.backend.auth.exception.SignupValidationException;
 import com.unievents.backend.auth.exception.UserAlreadyExistsException;
-import com.unievents.backend.exception.EventValidationException;
+import com.unievents.backend.events.exception.EventValidationException;
 import com.unievents.backend.exception.ResourceNotFoundException;
 import com.unievents.backend.exception.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handles ResourceNotFoundException.
@@ -180,8 +184,7 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        // Log the exception for debugging
-        ex.printStackTrace();
+        log.error("Unexpected error on {}", request.getRequestURI(), ex);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }

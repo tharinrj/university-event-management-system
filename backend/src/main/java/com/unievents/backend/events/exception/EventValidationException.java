@@ -1,4 +1,4 @@
-package com.unievents.backend.exception;
+package com.unievents.backend.events.exception;
 
 /**
  * Exception thrown when a validation error occurs during event creation or update.

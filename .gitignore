@@ -45,3 +45,4 @@ Thumbs.db
 # Local runtime data
 backend/data/*.mv.db
 backend/data/*.trace.db
+backend/data/eventdb.mv.db

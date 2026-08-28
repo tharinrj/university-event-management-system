@@ -1,4 +1,7 @@
+import { useAuth } from "../context/AuthContext.tsx";
+
 export default function HeroSection() {
+  const { isLoggedIn } = useAuth();
   return (
     <section className="relative overflow-hidden bg-linear-to-br from-primary-50 via-white to-accent-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Decorative background blobs */}
@@ -55,12 +58,14 @@ export default function HeroSection() {
                 />
               </svg>
             </a>
-            <a
-              href="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl transition-all duration-200"
-            >
-              Create Account
-            </a>
+            {!isLoggedIn && (
+              <a
+                href="/signup"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl transition-all duration-200"
+              >
+                Create Account
+              </a>
+            )}
           </div>
 
           {/* Social proof */}

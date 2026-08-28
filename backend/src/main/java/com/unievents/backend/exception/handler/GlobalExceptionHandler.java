@@ -1,5 +1,6 @@
 package com.unievents.backend.exception.handler;
 
+import com.unievents.backend.auth.exception.InvalidCredentialsException;
 import com.unievents.backend.auth.exception.SignupValidationException;
 import com.unievents.backend.auth.exception.UserAlreadyExistsException;
 import com.unievents.backend.events.exception.EventValidationException;
@@ -80,6 +81,24 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    /**
+     * Handles InvalidCredentialsException.
+     */
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+            InvalidCredentialsException ex,
+            HttpServletRequest request
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage(),
+                "Authentication Failed",
+                LocalDateTime.now(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     /**

@@ -67,3 +67,42 @@ export async function signup(request: SignupRequest): Promise<SignupResponse> {
 
   return (await response.json()) as SignupResponse;
 }
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  id: string;
+  email: string;
+  fullName: string;
+  token: string;
+}
+
+export async function login(request: LoginRequest): Promise<LoginResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    let errorData: ErrorResponse | null = null;
+    try {
+      errorData = (await response.json()) as ErrorResponse;
+    } catch {
+      // Ignore parsing errors and use a default message.
+    }
+
+    throw new ApiError(
+      errorData?.message ?? `Login failed: ${response.status}`,
+      response.status,
+      errorData?.fieldErrors ?? [],
+    );
+  }
+
+  return (await response.json()) as LoginResponse;
+}

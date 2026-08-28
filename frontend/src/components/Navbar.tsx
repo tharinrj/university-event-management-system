@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { navLinks } from "../data/mockEvents.ts";
 import ThemeToggle from "./ThemeToggle.tsx";
+import { useAuth } from "../context/AuthContext.tsx";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isLoggedIn, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = "/";
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -35,18 +42,39 @@ export default function Navbar() {
           {/* Desktop right side */}
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <a
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              Log in
-            </a>
-            <a
-              href="/signup"
-              className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
-            >
-              Sign Up
-            </a>
+            {isLoggedIn && user ? (
+              <>
+                <div className="flex items-center gap-2.5 pl-2">
+                  <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
+                    {user.fullName.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[140px] truncate">
+                    {user.fullName}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/login"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  Log in
+                </a>
+                <a
+                  href="/signup"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+                >
+                  Sign Up
+                </a>
+              </>
+            )}
           </div>
 
           {/* Mobile: theme toggle + hamburger */}
@@ -105,18 +133,39 @@ export default function Navbar() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
-              <a
-                href="/login"
-                className="px-3 py-2 text-gray-700 dark:text-gray-300 font-medium"
-              >
-                Log in
-              </a>
-              <a
-                href="/signup"
-                className="mx-3 px-4 py-2 text-center text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
-              >
-                Sign Up
-              </a>
+              {isLoggedIn && user ? (
+                <>
+                  <div className="flex items-center gap-2.5 px-3 py-2">
+                    <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
+                      {user.fullName.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {user.fullName}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="mx-3 px-4 py-2 text-center text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="px-3 py-2 text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Log in
+                  </a>
+                  <a
+                    href="/signup"
+                    className="mx-3 px-4 py-2 text-center text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+                  >
+                    Sign Up
+                  </a>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -124,3 +173,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

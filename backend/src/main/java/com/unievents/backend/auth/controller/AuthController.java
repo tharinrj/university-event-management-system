@@ -1,5 +1,7 @@
 package com.unievents.backend.auth.controller;
 
+import com.unievents.backend.auth.dto.LoginRequest;
+import com.unievents.backend.auth.dto.LoginResponse;
 import com.unievents.backend.auth.dto.SignupRequest;
 import com.unievents.backend.auth.dto.SignupResponse;
 import com.unievents.backend.auth.service.UserService;
@@ -38,5 +40,19 @@ public class AuthController {
         var user = userService.signup(request);
         return SignupResponse.from(user);
     }
+
+    /**
+     * Endpoint to authenticate an existing user.
+     *
+     * @param request the login request containing email and password
+     * @return the login response with the user information and session token
+     */
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        var user = userService.login(request);
+        var token = userService.generateToken();
+        return LoginResponse.from(user, token);
+    }
 }
+
 

@@ -4,12 +4,17 @@ import UpcomingEvents from "./components/UpcomingEvents.tsx";
 import HowItWorks from "./components/HowItWorks.tsx";
 import Footer from "./components/Footer.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 export default function App() {
-  const isSignUpPage = window.location.pathname === "/signup";
+  const pathname = window.location.pathname;
 
-  if (isSignUpPage) {
+  if (pathname === "/signup") {
     return <SignUpPage />;
+  }
+
+  if (pathname === "/login") {
+    return <LoginPage />;
   }
 
   return (
@@ -24,3 +29,4 @@ export default function App() {
     </div>
   );
 }
+

@@ -1,6 +1,8 @@
 package com.unievents.backend.auth.service;
 
+import com.unievents.backend.auth.dto.LoginRequest;
 import com.unievents.backend.auth.dto.SignupRequest;
+import com.unievents.backend.auth.exception.InvalidCredentialsException;
 import com.unievents.backend.auth.exception.SignupValidationException;
 import com.unievents.backend.auth.exception.UserAlreadyExistsException;
 import com.unievents.backend.auth.model.User;
@@ -68,6 +70,36 @@ public class UserService {
     }
 
     /**
+     * Authenticates a user with the given login credentials.
+     *
+     * @param request the login request containing email and password
+     * @return the authenticated user
+     * @throws InvalidCredentialsException if the email is not found or the password is incorrect
+     */
+    @Transactional(readOnly = true)
+    public User login(LoginRequest request) {
+        UserEntity userEntity = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        User user = userEntity.toDomain();
+
+        if (!passwordEncoder.matches(request.password(), user.password())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        return user;
+    }
+
+    /**
+     * Generates a new session token.
+     *
+     * @return a new UUID string to use as a session token
+     */
+    public String generateToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
      * Generates a new unique user ID.
      *
      * @return a new UUID string
@@ -76,4 +108,5 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 }
+
 

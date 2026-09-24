@@ -5,6 +5,21 @@ export interface RegistrationStatus {
   totalRegistrations: number;
 }
 
+export interface RegisteredEvent {
+  registrationId: string;
+  registeredAt: string;
+  event: {
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    location: string;
+    category: string;
+    isFeatured: boolean;
+  };
+}
+
 /**
  * Check whether a user is registered for an event.
  */
@@ -56,3 +71,13 @@ export async function cancelRegistration(
   }
   return res.json() as Promise<RegistrationStatus>;
 }
+
+/**
+ * Get all registered events for a user (for the profile page).
+ */
+export async function getUserRegistrations(userId: string): Promise<RegisteredEvent[]> {
+  const res = await fetch(`${API_BASE_URL}/api/users/${userId}/registrations`);
+  if (!res.ok) throw new Error("Failed to fetch registrations");
+  return res.json() as Promise<RegisteredEvent[]>;
+}
+

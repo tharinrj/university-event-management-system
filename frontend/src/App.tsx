@@ -5,6 +5,7 @@ import HowItWorks from "./components/HowItWorks.tsx";
 import Footer from "./components/Footer.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 export default function App() {
   const pathname = window.location.pathname;
@@ -15,6 +16,10 @@ export default function App() {
 
   if (pathname === "/login") {
     return <LoginPage />;
+  }
+
+  if (pathname === "/profile") {
+    return <ProfilePage />;
   }
 
   return (
@@ -29,4 +34,3 @@ export default function App() {
     </div>
   );
 }
-

@@ -1,6 +1,9 @@
 package com.unievents.backend.registrations.service;
 
+import com.unievents.backend.events.dto.EventResponse;
+import com.unievents.backend.events.model.EventEntity;
 import com.unievents.backend.events.repository.EventRepository;
+import com.unievents.backend.registrations.dto.RegisteredEventResponse;
 import com.unievents.backend.registrations.model.Registration;
 import com.unievents.backend.registrations.model.RegistrationEntity;
 import com.unievents.backend.registrations.model.RegistrationStatus;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -83,6 +88,27 @@ public class RegistrationService {
     public long countRegistrations(String eventId) {
         return registrationRepository.countByEventIdAndStatus(
                 eventId, RegistrationStatus.REGISTERED);
+    }
+
+    /**
+     * Returns all active registrations for a user, each paired with the event details.
+     * Sorted by event date ascending (upcoming first).
+     */
+    @Transactional(readOnly = true)
+    public List<RegisteredEventResponse> getRegisteredEvents(String userId) {
+        return registrationRepository
+                .findAllByUserIdAndStatus(userId, RegistrationStatus.REGISTERED)
+                .stream()
+                .map(reg -> {
+                    Registration domain = reg.toDomain();
+                    return eventRepository.findById(domain.eventId())
+                            .map(EventEntity::toDomain)
+                            .map(event -> RegisteredEventResponse.from(domain, EventResponse.from(event)))
+                            .orElse(null);
+                })
+                .filter(r -> r != null)
+                .sorted(Comparator.comparing(r -> r.event().date()))
+                .toList();
     }
 
     private Registration save(String userId, String eventId) {

@@ -44,14 +44,17 @@ export default function Navbar() {
             <ThemeToggle />
             {isLoggedIn && user ? (
               <>
-                <div className="flex items-center gap-2.5 pl-2">
+                <a
+                  href="/profile"
+                  className="flex items-center gap-2 pl-2 hover:opacity-80 transition-opacity"
+                >
                   <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
                     {user.fullName.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[140px] truncate">
                     {user.fullName}
                   </span>
-                </div>
+                </a>
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
@@ -135,14 +138,20 @@ export default function Navbar() {
             <div className="flex flex-col gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
               {isLoggedIn && user ? (
                 <>
-                  <div className="flex items-center gap-2.5 px-3 py-2">
+                  <a
+                    href="/profile"
+                    className="flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  >
                     <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
                       {user.fullName.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {user.fullName}
-                    </span>
-                  </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {user.fullName}
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">View profile</p>
+                    </div>
+                  </a>
                   <button
                     onClick={handleLogout}
                     className="mx-3 px-4 py-2 text-center text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"

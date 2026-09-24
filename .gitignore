@@ -46,3 +46,5 @@ Thumbs.db
 backend/data/*.mv.db
 backend/data/*.trace.db
 backend/data/eventdb.mv.db
+
+*.md

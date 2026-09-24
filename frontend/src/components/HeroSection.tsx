@@ -69,9 +69,9 @@ export default function HeroSection() {
           </div>
 
           {/* Social proof */}
-          <p className="mt-8 text-sm text-gray-500 dark:text-gray-500">
+          {/* <p className="mt-8 text-sm text-gray-500 dark:text-gray-500">
             Trusted by 5,000+ students across 12 departments
-          </p>
+          </p> */}
         </div>
       </div>
     </section>

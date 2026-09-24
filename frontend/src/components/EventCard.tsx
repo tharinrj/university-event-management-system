@@ -1,5 +1,12 @@
+import { useState, useEffect, useCallback } from "react";
 import type { Event } from "../types/index.ts";
 import { categoryColors, categoryGradients } from "../data/mockEvents.ts";
+import { useAuth } from "../context/AuthContext.tsx";
+import {
+  getRegistrationStatus,
+  registerForEvent,
+  cancelRegistration,
+} from "../api/registrations.ts";
 
 interface EventCardProps {
   event: Event;
@@ -8,13 +15,64 @@ interface EventCardProps {
 export default function EventCard({ event }: EventCardProps) {
   const colors = categoryColors[event.category];
   const gradient = categoryGradients[event.category];
+  const { user } = useAuth();
+
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [totalRegistrations, setTotalRegistrations] = useState(0);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch registration status when user is logged in
+  const fetchStatus = useCallback(async () => {
+    if (!user) return;
+    setStatusLoading(true);
+    try {
+      const status = await getRegistrationStatus(event.id, user.id);
+      setIsRegistered(status.registered);
+      setTotalRegistrations(status.totalRegistrations);
+    } catch {
+      // silently ignore — status unavailable
+    } finally {
+      setStatusLoading(false);
+    }
+  }, [user, event.id]);
+
+  useEffect(() => {
+    void fetchStatus();
+  }, [fetchStatus]);
+
+  const handleRegister = async () => {
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
+    setActionLoading(true);
+    setError(null);
+    try {
+      if (isRegistered) {
+        const result = await cancelRegistration(event.id, user.id);
+        setIsRegistered(result.registered);
+        setTotalRegistrations(result.totalRegistrations);
+      } else {
+        const result = await registerForEvent(event.id, user.id);
+        setIsRegistered(result.registered);
+        setTotalRegistrations(result.totalRegistrations);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Only students (or guests redirected to login) see the register button
+  const canRegister = !user || user.role === "STUDENT";
 
   return (
-    <article className="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-1">
+    <article className="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-1 flex flex-col">
       {/* Image placeholder */}
-      <div
-        className={`h-48 bg-linear-to-br ${gradient} relative overflow-hidden`}
-      >
+      <div className={`h-48 bg-linear-to-br ${gradient} relative overflow-hidden shrink-0`}>
         <div className="absolute inset-0 opacity-20" aria-hidden="true">
           <div className="absolute top-4 right-4 w-20 h-20 border-2 border-white rounded-full" />
           <div className="absolute bottom-4 left-4 w-12 h-12 border-2 border-white rounded-lg rotate-12" />
@@ -33,10 +91,21 @@ export default function EventCard({ event }: EventCardProps) {
             </span>
           </div>
         )}
+        {/* Registration count badge */}
+        {totalRegistrations > 0 && (
+          <div className="absolute bottom-3 right-3">
+            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-black/40 text-white backdrop-blur-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                <path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 17a9.953 9.953 0 0 1-5.385-1.572ZM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 0 0-1.588-3.755 4.502 4.502 0 0 1 5.874 2.636.818.818 0 0 1-.36.98A7.465 7.465 0 0 1 14.5 16Z" />
+              </svg>
+              {totalRegistrations}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Card body */}
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
           {event.title}
         </h3>
@@ -60,9 +129,7 @@ export default function EventCard({ event }: EventCardProps) {
                 d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
               />
             </svg>
-            <span>
-              {event.date} at {event.time}
-            </span>
+            <span>{event.date} at {event.time}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500">
             <svg
@@ -73,20 +140,41 @@ export default function EventCard({ event }: EventCardProps) {
               stroke="currentColor"
               className="w-4 h-4 shrink-0"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
             </svg>
             <span className="line-clamp-1">{event.location}</span>
           </div>
         </div>
+
+        {/* Register / Cancel button — only for students and guests */}
+        {canRegister && (
+          <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
+            {error && (
+              <p className="mb-2 text-xs text-red-600 dark:text-red-400">{error}</p>
+            )}
+            <button
+              id={`register-btn-${event.id}`}
+              onClick={handleRegister}
+              disabled={actionLoading || statusLoading}
+              className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
+                isRegistered
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 border border-gray-200 dark:border-gray-700"
+                  : "bg-primary-600 hover:bg-primary-700 text-white"
+              }`}
+            >
+              {actionLoading
+                ? (isRegistered ? "Cancelling…" : "Registering…")
+                : statusLoading
+                  ? "Loading…"
+                  : !user
+                    ? "Sign in to Register"
+                    : isRegistered
+                      ? "✓ Registered — Click to Cancel"
+                      : "Register for Event"}
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );

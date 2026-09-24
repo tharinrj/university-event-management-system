@@ -2,6 +2,8 @@ package com.unievents.backend.auth.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -24,6 +26,10 @@ public class UserEntity {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -34,11 +40,13 @@ public class UserEntity {
         // Required by JPA
     }
 
-    public UserEntity(String id, String email, String fullName, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserEntity(String id, String email, String fullName, String password, UserRole role,
+                      LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;
         this.password = password;
+        this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -49,13 +57,14 @@ public class UserEntity {
                 user.email(),
                 user.fullName(),
                 user.password(),
+                user.role(),
                 user.createdAt(),
                 user.updatedAt()
         );
     }
 
     public User toDomain() {
-        return new User(id, email, fullName, password, createdAt, updatedAt);
+        return new User(id, email, fullName, password, role, createdAt, updatedAt);
     }
 
     // Getters for JPA
@@ -73,6 +82,10 @@ public class UserEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public UserRole getRole() {
+        return role;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 
+export type UserRole = "STUDENT" | "ORGANIZER" | "ADMIN";
+
 export interface AuthUser {
   id: string;
   email: string;
   fullName: string;
+  role: UserRole;
   token: string;
 }
 

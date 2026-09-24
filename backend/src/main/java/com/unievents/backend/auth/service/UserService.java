@@ -7,6 +7,7 @@ import com.unievents.backend.auth.exception.SignupValidationException;
 import com.unievents.backend.auth.exception.UserAlreadyExistsException;
 import com.unievents.backend.auth.model.User;
 import com.unievents.backend.auth.model.UserEntity;
+import com.unievents.backend.auth.model.UserRole;
 import com.unievents.backend.auth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,9 @@ public class UserService {
             throw new UserAlreadyExistsException("User with email '" + request.email() + "' already exists");
         }
 
+        // Resolve role — STUDENT is the default for self-registration
+        UserRole role = (request.role() != null) ? request.role() : UserRole.STUDENT;
+
         // Create new user
         String userId = generateUserId();
         LocalDateTime now = LocalDateTime.now();
@@ -59,6 +63,7 @@ public class UserService {
                 request.email(),
                 request.fullName(),
                 encodedPassword,
+                role,
                 now,
                 now
         );

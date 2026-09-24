@@ -10,6 +10,7 @@ public record User(
         String email,
         String fullName,
         String password,
+        UserRole role,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

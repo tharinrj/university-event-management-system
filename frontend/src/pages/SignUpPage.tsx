@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { ApiError, signup } from "../api/auth.ts";
+import type { UserRole } from "../api/auth.ts";
 
 interface SignUpFormData {
   fullName: string;
@@ -8,6 +9,7 @@ interface SignUpFormData {
   password: string;
   confirmPassword: string;
   department: string;
+  role: UserRole;
   agreeToTerms: boolean;
 }
 
@@ -17,6 +19,7 @@ const initialFormData: SignUpFormData = {
   password: "",
   confirmPassword: "",
   department: "",
+  role: "STUDENT",
   agreeToTerms: false,
 };
 
@@ -84,12 +87,16 @@ export default function SignUpPage() {
         email: formData.email.trim(),
         password: formData.password,
         passwordConfirm: formData.confirmPassword,
+        role: formData.role,
       });
 
       setErrors({});
       setSubmitted(true);
       setServerMessage(`Welcome, ${response.fullName}. Your account was created.`);
       setFormData(initialFormData);
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
     } catch (error) {
       setSubmitted(false);
 
@@ -170,6 +177,42 @@ export default function SignUpPage() {
               {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
             </div>
 
+            {/* Role selector */}
+            <div>
+              <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                I am signing up as
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  id="role-student"
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, role: "STUDENT" }))}
+                  className={`flex flex-col items-center gap-2 rounded-xl border-2 py-4 px-3 text-sm font-medium transition-all ${
+                    formData.role === "STUDENT"
+                      ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+                      : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                  }`}
+                >
+                  <span className="text-2xl">🎓</span>
+                  Student
+                </button>
+                <button
+                  id="role-organizer"
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, role: "ORGANIZER" }))}
+                  className={`flex flex-col items-center gap-2 rounded-xl border-2 py-4 px-3 text-sm font-medium transition-all ${
+                    formData.role === "ORGANIZER"
+                      ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+                      : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
+                  }`}
+                >
+                  <span className="text-2xl">📋</span>
+                  Event Organizer
+                </button>
+              </div>
+            </div>
+
+            {/* Department */}
             <div>
               <label htmlFor="department" className="block text-sm font-medium text-gray-800 dark:text-gray-200">
                 Department
@@ -279,27 +322,56 @@ export default function SignUpPage() {
 
         <aside className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 p-8 sm:p-10 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Why students sign up</h2>
-            <ul className="mt-6 space-y-4 text-gray-600 dark:text-gray-400">
-              <li className="flex gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-500" aria-hidden="true" />
-                Personalized event recommendations by department and interests.
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-sky-500" aria-hidden="true" />
-                One-click registration and calendar reminders.
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
-                Early access to featured campus events.
-              </li>
-            </ul>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+              {formData.role === "ORGANIZER" ? "Why organizers love UniEvents" : "Why students sign up"}
+            </h2>
+            {formData.role === "ORGANIZER" ? (
+              <ul className="mt-6 space-y-4 text-gray-600 dark:text-gray-400">
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-500" aria-hidden="true" />
+                  Create and publish events to the whole university in minutes.
+                </li>
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-sky-500" aria-hidden="true" />
+                  Manage registrations, attendance, and capacity automatically.
+                </li>
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                  Send announcements directly to all registered attendees.
+                </li>
+              </ul>
+            ) : (
+              <ul className="mt-6 space-y-4 text-gray-600 dark:text-gray-400">
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-500" aria-hidden="true" />
+                  Personalized event recommendations by department and interests.
+                </li>
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-sky-500" aria-hidden="true" />
+                  One-click registration and calendar reminders.
+                </li>
+                <li className="flex gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                  Early access to featured campus events.
+                </li>
+              </ul>
+            )}
           </div>
 
           <div className="mt-10 rounded-2xl bg-linear-to-br from-primary-600 to-sky-600 text-white p-6">
-            <p className="text-sm uppercase tracking-wide text-white/80">Student community</p>
-            <p className="mt-2 text-3xl font-bold">5,000+</p>
-            <p className="mt-1 text-sm text-white/90">active members this semester</p>
+            {formData.role === "ORGANIZER" ? (
+              <>
+                <p className="text-sm uppercase tracking-wide text-white/80">This semester</p>
+                <p className="mt-2 text-3xl font-bold">120+</p>
+                <p className="mt-1 text-sm text-white/90">events hosted by organisers like you</p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm uppercase tracking-wide text-white/80">Student community</p>
+                <p className="mt-2 text-3xl font-bold">5,000+</p>
+                <p className="mt-1 text-sm text-white/90">active members this semester</p>
+              </>
+            )}
           </div>
         </aside>
       </div>

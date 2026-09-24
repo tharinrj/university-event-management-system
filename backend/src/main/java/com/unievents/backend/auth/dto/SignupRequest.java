@@ -1,5 +1,6 @@
 package com.unievents.backend.auth.dto;
 
+import com.unievents.backend.auth.model.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -26,7 +27,10 @@ public record SignupRequest(
         String password,
 
         @NotBlank(message = "Password confirmation is required")
-        String passwordConfirm
+        String passwordConfirm,
+
+        // Optional – null means STUDENT
+        UserRole role
 ) {
 }
 

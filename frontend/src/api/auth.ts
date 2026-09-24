@@ -1,16 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
+export type UserRole = "STUDENT" | "ORGANIZER" | "ADMIN";
+
 export interface SignupRequest {
   fullName: string;
   email: string;
   password: string;
   passwordConfirm: string;
+  role?: UserRole;
 }
 
 export interface SignupResponse {
   id: string;
   email: string;
   fullName: string;
+  role: UserRole;
   createdAt: string;
 }
 
@@ -77,6 +81,7 @@ export interface LoginResponse {
   id: string;
   email: string;
   fullName: string;
+  role: UserRole;
   token: string;
 }
 

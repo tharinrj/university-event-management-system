@@ -60,6 +60,7 @@ export default function LoginPage() {
         id: response.id,
         email: response.email,
         fullName: response.fullName,
+        role: response.role,
         token: response.token,
       });
 

@@ -1,6 +1,7 @@
 package com.unievents.backend.auth.dto;
 
 import com.unievents.backend.auth.model.User;
+import com.unievents.backend.auth.model.UserRole;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ public record SignupResponse(
         String id,
         String email,
         String fullName,
+        UserRole role,
         LocalDateTime createdAt
 ) {
     public static SignupResponse from(User user) {
@@ -18,6 +20,7 @@ public record SignupResponse(
                 user.id(),
                 user.email(),
                 user.fullName(),
+                user.role(),
                 user.createdAt()
         );
     }

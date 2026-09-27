@@ -80,7 +80,8 @@ public class EventController {
                     request.time(),
                     request.location(),
                     request.parsedCategory(),
-                    request.featured()
+                    request.featured(),
+                    request.createdBy()
             ));
             return EventResponse.from(created);
         } catch (IllegalArgumentException ex) {
@@ -91,6 +92,8 @@ public class EventController {
     @PutMapping("/events/{id}")
     public EventResponse updateEvent(@PathVariable String id, @Valid @RequestBody EventUpdateRequest request) {
         try {
+            // Preserve the original createdBy when updating
+            String createdBy = eventService.getById(id).map(Event::createdBy).orElse(null);
             Event updated = eventService.updateEvent(id, new Event(
                     id,
                     request.title(),
@@ -99,7 +102,8 @@ public class EventController {
                     request.time(),
                     request.location(),
                     request.parsedCategory(),
-                    request.featured()
+                    request.featured(),
+                    createdBy
             ));
             return EventResponse.from(updated);
         } catch (IllegalArgumentException ex) {
@@ -111,5 +115,14 @@ public class EventController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEvent(@PathVariable String id) {
         eventService.deleteEvent(id);
+    }
+
+    /** List all events created by a specific organizer. */
+    @GetMapping("/users/{userId}/created-events")
+    public List<EventResponse> getEventsByCreator(@PathVariable String userId) {
+        return eventService.getEventsByCreator(userId)
+                .stream()
+                .map(EventResponse::from)
+                .toList();
     }
 }

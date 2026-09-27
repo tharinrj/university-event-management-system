@@ -40,12 +40,16 @@ public class EventEntity {
     @Column(nullable = false)
     private boolean featured;
 
+    /** ID of the user (organizer) who created this event. Nullable for seeded events. */
+    @Column(name = "created_by")
+    private String createdBy;
+
     protected EventEntity() {
         // Required by JPA.
     }
 
     public EventEntity(String id, String title, String description, LocalDate date, LocalTime time,
-                       String location, EventCategory category, boolean featured) {
+                       String location, EventCategory category, boolean featured, String createdBy) {
         this.event_id = id;
         this.title = title;
         this.description = description;
@@ -54,6 +58,7 @@ public class EventEntity {
         this.location = location;
         this.category = category;
         this.featured = featured;
+        this.createdBy = createdBy;
     }
 
     public static EventEntity fromDomain(Event event) {
@@ -65,12 +70,14 @@ public class EventEntity {
                 event.time(),
                 event.location(),
                 event.category(),
-                event.featured()
+                event.featured(),
+                event.createdBy()
         );
     }
 
     public Event toDomain() {
-        return new Event(event_id, title, description, date, time, location, category, featured);
+        return new Event(event_id, title, description, date, time, location, category, featured, createdBy);
     }
-}
 
+    public String getCreatedBy() { return createdBy; }
+}

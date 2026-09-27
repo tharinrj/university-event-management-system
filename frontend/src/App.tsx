@@ -6,6 +6,7 @@ import Footer from "./components/Footer.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import CreateEventPage from "./pages/CreateEventPage.tsx";
 
 export default function App() {
   const pathname = window.location.pathname;
@@ -20,6 +21,10 @@ export default function App() {
 
   if (pathname === "/profile") {
     return <ProfilePage />;
+  }
+
+  if (pathname === "/events/create") {
+    return <CreateEventPage />;
   }
 
   return (

@@ -31,7 +31,7 @@ public class EventService {
                     LocalTime.of(18, 0),
                     "Engineering Building, Hall A",
                     EventCategory.HACKATHON,
-                    true
+                    true, null
             ),
             new Event(
                     "2",
@@ -41,7 +41,7 @@ public class EventService {
                     LocalTime.of(14, 0),
                     "Science Auditorium, Room 301",
                     EventCategory.GUEST_LECTURE,
-                    false
+                    false, null
             ),
             new Event(
                     "3",
@@ -51,7 +51,7 @@ public class EventService {
                     LocalTime.of(10, 0),
                     "Student Union Plaza",
                     EventCategory.CLUB_FAIR,
-                    false
+                    false, null
             ),
             new Event(
                     "4",
@@ -61,7 +61,7 @@ public class EventService {
                     LocalTime.of(16, 0),
                     "CS Lab 204",
                     EventCategory.WORKSHOP,
-                    false
+                    false, null
             ),
             new Event(
                     "5",
@@ -71,7 +71,7 @@ public class EventService {
                     LocalTime.of(19, 0),
                     "Business School Atrium",
                     EventCategory.NETWORKING,
-                    false
+                    false, null
             ),
             new Event(
                     "6",
@@ -81,7 +81,7 @@ public class EventService {
                     LocalTime.of(11, 0),
                     "Main Quad & Amphitheater",
                     EventCategory.CULTURAL,
-                    false
+                    false, null
             )
     );
 
@@ -149,6 +149,14 @@ public class EventService {
                 .map(event -> event.category().getLabel())
                 .distinct()
                 .sorted()
+                .toList();
+    }
+
+    public List<Event> getEventsByCreator(String userId) {
+        return eventRepository.findAllByCreatedBy(userId)
+                .stream()
+                .map(EventEntity::toDomain)
+                .sorted(Comparator.comparing(Event::date).reversed())
                 .toList();
     }
 

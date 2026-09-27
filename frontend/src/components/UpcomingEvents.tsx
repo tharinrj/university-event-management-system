@@ -44,7 +44,7 @@ export default function UpcomingEvents() {
         const nextEvents = await getEvents();
         setEvents(nextEvents);
       } catch {
-        setErrorMessage("Unable to load events right now. Make sure the backend is running.");
+        setErrorMessage("Unable to load events right now.");
       } finally {
         setIsLoading(false);
       }
@@ -110,11 +110,10 @@ export default function UpcomingEvents() {
             <button
               id="filter-all"
               onClick={() => setActiveCategory("All")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                activeCategory === "All"
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeCategory === "All"
                   ? "bg-primary-600 text-white shadow-sm shadow-primary-200 dark:shadow-primary-900/40"
                   : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:text-primary-600 dark:hover:text-primary-400"
-              }`}
+                }`}
             >
               All
               <span className="ml-1.5 text-xs opacity-70">({events.length})</span>
@@ -124,11 +123,10 @@ export default function UpcomingEvents() {
                 id={`filter-${cat.toLowerCase().replace(/\s+/g, "-")}`}
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  activeCategory === cat
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeCategory === cat
                     ? "bg-primary-600 text-white shadow-sm shadow-primary-200 dark:shadow-primary-900/40"
                     : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:text-primary-600 dark:hover:text-primary-400"
-                }`}
+                  }`}
               >
                 {cat}
                 <span className="ml-1.5 text-xs opacity-70">

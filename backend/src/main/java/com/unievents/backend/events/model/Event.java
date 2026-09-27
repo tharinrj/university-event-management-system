@@ -11,6 +11,7 @@ public record Event(
         LocalTime time,
         String location,
         EventCategory category,
-        boolean featured
+        boolean featured,
+        String createdBy
 ) {
 }

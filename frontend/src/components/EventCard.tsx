@@ -147,35 +147,52 @@ export default function EventCard({ event }: EventCardProps) {
           </div>
         </div>
 
-        {/* Register / Cancel button — only for students and guests */}
+        {/* Register section — only for students and guests */}
         {canRegister && (
           <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
             {error && (
               <p className="mb-2 text-xs text-red-600 dark:text-red-400">{error}</p>
             )}
-            <button
-              id={`register-btn-${event.id}`}
-              onClick={handleRegister}
-              disabled={actionLoading || statusLoading}
-              className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${
-                isRegistered
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 border border-gray-200 dark:border-gray-700"
-                  : "bg-primary-600 hover:bg-primary-700 text-white"
-              }`}
-            >
-              {actionLoading
-                ? (isRegistered ? "Cancelling…" : "Registering…")
-                : statusLoading
-                  ? "Loading…"
-                  : !user
-                    ? "Sign in to Register"
-                    : isRegistered
-                      ? "✓ Registered — Click to Cancel"
+
+            {isRegistered ? (
+              /* ── Registered state ── */
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                  </svg>
+                  Registered
+                </span>
+                <button
+                  id={`cancel-btn-${event.id}`}
+                  onClick={handleRegister}
+                  disabled={actionLoading}
+                  className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {actionLoading ? "Cancelling…" : "Cancel registration"}
+                </button>
+              </div>
+            ) : (
+              /* ── Not registered state ── */
+              <button
+                id={`register-btn-${event.id}`}
+                onClick={handleRegister}
+                disabled={actionLoading || statusLoading}
+                className="w-full py-2.5 rounded-xl text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {actionLoading
+                  ? "Registering…"
+                  : statusLoading
+                    ? "Loading…"
+                    : !user
+                      ? "Sign in to Register"
                       : "Register for Event"}
-            </button>
+              </button>
+            )}
           </div>
         )}
       </div>
     </article>
   );
 }
+

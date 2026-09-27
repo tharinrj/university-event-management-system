@@ -15,7 +15,8 @@ public record EventCreateRequest(
         @NotNull LocalTime time,
         @NotBlank @Size(max = 200) String location,
         @NotBlank String category,
-        boolean featured
+        boolean featured,
+        String createdBy
 ) {
     public EventCategory parsedCategory() {
         return EventCategory.fromLabel(category);

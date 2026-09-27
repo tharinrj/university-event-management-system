@@ -7,6 +7,7 @@ export interface Event {
   location: string;
   category: EventCategory;
   isFeatured?: boolean;
+  createdBy?: string | null;
 }
 
 export type EventCategory =

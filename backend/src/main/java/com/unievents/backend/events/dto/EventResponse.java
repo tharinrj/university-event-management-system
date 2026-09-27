@@ -13,7 +13,8 @@ public record EventResponse(
         String time,
         String location,
         String category,
-        @JsonProperty("isFeatured") boolean isFeatured
+        @JsonProperty("isFeatured") boolean isFeatured,
+        String createdBy
 ) {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, uuuu");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
@@ -27,7 +28,8 @@ public record EventResponse(
                 event.time().format(TIME_FORMATTER),
                 event.location(),
                 event.category().getLabel(),
-                event.featured()
+                event.featured(),
+                event.createdBy()
         );
     }
 }

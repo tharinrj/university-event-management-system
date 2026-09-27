@@ -44,6 +44,17 @@ export default function Navbar() {
             <ThemeToggle />
             {isLoggedIn && user ? (
               <>
+                {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
+                  <a
+                    href="/events/create"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                    </svg>
+                    Add Event
+                  </a>
+                )}
                 <a
                   href="/profile"
                   className="flex items-center gap-2 pl-2 hover:opacity-80 transition-opacity"
@@ -138,6 +149,17 @@ export default function Navbar() {
             <div className="flex flex-col gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
               {isLoggedIn && user ? (
                 <>
+                  {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
+                    <a
+                      href="/events/create"
+                      className="mx-3 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                        <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                      </svg>
+                      Add Event
+                    </a>
+                  )}
                   <a
                     href="/profile"
                     className="flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"

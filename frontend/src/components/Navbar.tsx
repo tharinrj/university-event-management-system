@@ -62,7 +62,7 @@ export default function Navbar() {
                   <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
                     {user.fullName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[140px] truncate">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 max-w-35 truncate">
                     {user.fullName}
                   </span>
                 </a>

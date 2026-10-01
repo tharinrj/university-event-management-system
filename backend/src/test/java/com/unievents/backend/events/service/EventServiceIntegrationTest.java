@@ -40,7 +40,8 @@ class EventServiceIntegrationTest {
                 LocalTime.of(10, 0),
                 "Room A",
                 EventCategory.WORKSHOP,
-                false
+                false,
+                null
         ));
 
         assertThat(eventService.getById(created.id())).isPresent();
@@ -53,7 +54,8 @@ class EventServiceIntegrationTest {
                 LocalTime.of(11, 0),
                 "Room B",
                 EventCategory.GUEST_LECTURE,
-                true
+                true,
+                null
         ));
 
         assertThat(updated.title()).isEqualTo("Updated Test Event");

@@ -25,10 +25,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService      jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.userRepository  = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService      = jwtService;
     }
 
     /**
@@ -96,12 +98,13 @@ public class UserService {
     }
 
     /**
-     * Generates a new session token.
+     * Generates a signed JWT for the given authenticated user.
      *
-     * @return a new UUID string to use as a session token
+     * @param user the authenticated user
+     * @return a compact, signed JWT string
      */
-    public String generateToken() {
-        return UUID.randomUUID().toString();
+    public String generateToken(User user) {
+        return jwtService.generateToken(user.id(), user.email(), user.role());
     }
 
     /**

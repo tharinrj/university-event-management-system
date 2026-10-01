@@ -49,8 +49,8 @@ public class AuthController {
      */
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-        var user = userService.login(request);
-        var token = userService.generateToken();
+        var user  = userService.login(request);
+        var token = userService.generateToken(user);
         return LoginResponse.from(user, token);
     }
 }

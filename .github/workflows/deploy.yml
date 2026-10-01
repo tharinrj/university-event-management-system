@@ -16,6 +16,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          # Pass secrets as environment variables so the script can use them
+          # without them ever appearing in the workflow YAML in plain text.
+          envs: JWT_SECRET,DB_USERNAME,DB_PASSWORD
           script: |
             set -e
 
@@ -23,6 +26,27 @@ jobs:
 
             echo "Pulling latest code..."
             git pull origin main
+
+            # ── Write secrets to a protected environment file ────────────────
+            # This file is read by the systemd service via EnvironmentFile=
+            # and is never committed to the repository.
+            sudo mkdir -p /etc/event-manager
+            sudo tee /etc/event-manager/env > /dev/null <<EOF
+            JWT_SECRET=${JWT_SECRET}
+            DB_USERNAME=${DB_USERNAME}
+            DB_PASSWORD=${DB_PASSWORD}
+            EOF
+            # Restrict access: readable only by root and the service user
+            sudo chmod 600 /etc/event-manager/env
+            sudo chown root:root /etc/event-manager/env
+
+            # ── Ensure the systemd unit loads the env file ───────────────────
+            # Patch the unit in-place only if EnvironmentFile is not yet set.
+            UNIT_FILE=$(sudo systemctl show -P FragmentPath event-manager)
+            if ! sudo grep -q "EnvironmentFile" "$UNIT_FILE"; then
+              sudo sed -i '/^\[Service\]/a EnvironmentFile=/etc/event-manager/env' "$UNIT_FILE"
+              sudo systemctl daemon-reload
+            fi
 
             echo "Building Spring Boot..."
             cd backend

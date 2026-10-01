@@ -18,7 +18,7 @@
     <description>Spring Boot backend for UniEvents</description>
 
     <properties>
-        <java.version>24</java.version>
+        <java.version>21</java.version>
         <lombok.version>1.18.46</lombok.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>

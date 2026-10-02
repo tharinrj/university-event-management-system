@@ -121,7 +121,7 @@ export default function ProfilePage() {
     setError(null);
 
     if (user.role === "STUDENT") {
-      getUserRegistrations(user.id)
+      getUserRegistrations(user.id, user.token)
         .then(setRegistrations)
         .catch(() => setError("Could not load registrations. Please try again."))
         .finally(() => setLoading(false));

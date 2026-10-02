@@ -28,7 +28,7 @@ export default function EventCard({ event }: EventCardProps) {
     if (!user) return;
     setStatusLoading(true);
     try {
-      const status = await getRegistrationStatus(event.id, user.id);
+      const status = await getRegistrationStatus(event.id, user.id, user.token);
       setIsRegistered(status.registered);
       setTotalRegistrations(status.totalRegistrations);
     } catch {
@@ -51,11 +51,11 @@ export default function EventCard({ event }: EventCardProps) {
     setError(null);
     try {
       if (isRegistered) {
-        const result = await cancelRegistration(event.id, user.id);
+        const result = await cancelRegistration(event.id, user.id, user.token);
         setIsRegistered(result.registered);
         setTotalRegistrations(result.totalRegistrations);
       } else {
-        const result = await registerForEvent(event.id, user.id);
+        const result = await registerForEvent(event.id, user.id, user.token);
         setIsRegistered(result.registered);
         setTotalRegistrations(result.totalRegistrations);
       }

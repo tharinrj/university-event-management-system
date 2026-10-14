@@ -16,6 +16,7 @@ export interface SignupResponse {
   fullName: string;
   role: UserRole;
   createdAt: string;
+  token: string;
 }
 
 export interface ApiFieldError {

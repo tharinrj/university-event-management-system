@@ -37,8 +37,9 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public SignupResponse signup(@Valid @RequestBody SignupRequest request) {
-        var user = userService.signup(request);
-        return SignupResponse.from(user);
+        var user  = userService.signup(request);
+        var token = userService.generateToken(user);
+        return SignupResponse.from(user, token);
     }
 
     /**

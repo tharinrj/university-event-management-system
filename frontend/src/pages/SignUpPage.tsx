@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { ApiError, signup } from "../api/auth.ts";
 import type { UserRole } from "../api/auth.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 interface SignUpFormData {
   fullName: string;
@@ -24,6 +25,7 @@ const initialFormData: SignUpFormData = {
 };
 
 export default function SignUpPage() {
+  const { setUser } = useAuth();
   const [formData, setFormData] = useState<SignUpFormData>(initialFormData);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -92,7 +94,17 @@ export default function SignUpPage() {
 
       setErrors({});
       setSubmitted(true);
-      setServerMessage(`Welcome, ${response.fullName}. Your account was created.`);
+      setServerMessage(`Welcome, ${response.fullName}! Your account was created.`);
+
+      // Log the user in immediately using the JWT returned by the server
+      setUser({
+        id: response.id,
+        email: response.email,
+        fullName: response.fullName,
+        role: response.role,
+        token: response.token,
+      });
+
       setFormData(initialFormData);
       setTimeout(() => {
         window.location.href = "/";

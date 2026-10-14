@@ -13,15 +13,17 @@ public record SignupResponse(
         String email,
         String fullName,
         UserRole role,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String token
 ) {
-    public static SignupResponse from(User user) {
+    public static SignupResponse from(User user, String token) {
         return new SignupResponse(
                 user.id(),
                 user.email(),
                 user.fullName(),
                 user.role(),
-                user.createdAt()
+                user.createdAt(),
+                token
         );
     }
 }

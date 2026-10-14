@@ -12,7 +12,7 @@ A full-stack web application for discovering, registering for, and managing univ
 - **User Authentication** — Secure signup and login with BCrypt password hashing
 - **Dark Mode** — Full light/dark theme support with system preference detection
 - **Responsive Design** — Mobile-first layout that works across all screen sizes
-- **RESTful API** — Clean REST endpoints with filtering, search, and validation
+- **RESTful API** — Clean REST endpoints with filtering and validation
 - **Database Migrations** — Version-controlled schema using Flyway
 
 ## 🏗️ Architecture
@@ -60,7 +60,7 @@ event-manager/
 
 ## 📊 Database Schema
 
-The database includes 8 tables with full referential integrity:
+The database includes 9 tables with full referential integrity:
 
 ```
 users ─────────┬──── registrations ────── events
@@ -90,16 +90,11 @@ users ─────────┬──── registrations ─────�
 ### Events
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/events` | List all events (supports filters) |
+| `GET` | `/api/events` | List all events |
 | `GET` | `/api/events/{id}` | Get a single event by ID |
 | `POST` | `/api/events` | Create a new event |
 | `PUT` | `/api/events/{id}` | Update an existing event |
 | `DELETE` | `/api/events/{id}` | Delete an event |
-
-**Query Parameters** for `GET /api/events`:
-- `q` — Full-text search on title/description
-- `category` — Filter by category
-- `dateFrom` / `dateTo` — Filter by date range
 
 ## 🚀 Getting Started
 
@@ -149,12 +144,3 @@ npm run dev
 ```
 
 The frontend will start on `http://localhost:5173` and proxy API requests to the backend.
-
-## 🗺️ Roadmap
-
-- [ ] **JWT Authentication** — Replace placeholder tokens with proper JWT-based auth
-- [ ] **Event Registration** — Register/cancel for events from the UI
-- [ ] **Event Detail Page** — Dedicated page with full event info and registration
-- [ ] **Search & Filter UI** — Category pills, date picker, and search bar
-- [ ] **Event Creation UI** — Admin/organizer form for creating and editing events
-- [ ] **Feedback System** — Post-event ratings and comments

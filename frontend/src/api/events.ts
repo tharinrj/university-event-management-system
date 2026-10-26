@@ -26,16 +26,19 @@ export interface CreateEventRequest {
 /**
  * Create a new event — POST /api/events
  */
-export async function createEvent(request: CreateEventRequest): Promise<Event> {
+export async function createEvent(request: CreateEventRequest, token: string): Promise<Event> {
   const res = await fetch(`${API_BASE_URL}/api/events`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(request),
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({})) as { message?: string };
-    throw new Error(err.message ?? `Failed to create event (${res.status})`);
+    throw new Error(err.message ?? 'Failed to create event');
   }
 
   return res.json() as Promise<Event>;
@@ -44,8 +47,10 @@ export async function createEvent(request: CreateEventRequest): Promise<Event> {
 /**
  * Get all events created by an organizer — GET /api/users/{userId}/created-events
  */
-export async function getCreatedEvents(userId: string): Promise<Event[]> {
-  const res = await fetch(`${API_BASE_URL}/api/users/${userId}/created-events`);
+export async function getCreatedEvents(userId: string, token: string): Promise<Event[]> {
+  const res = await fetch(`${API_BASE_URL}/api/users/${userId}/created-events`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!res.ok) throw new Error("Failed to fetch created events");
   return res.json() as Promise<Event[]>;
 }

@@ -129,7 +129,7 @@ export default function ProfilePage() {
     }
 
     if (user.role === "ORGANIZER" || user.role === "ADMIN") {
-      getCreatedEvents(user.id)
+      getCreatedEvents(user.id, user.token)
         .then(setCreatedEvents)
         .catch(() => setError("Could not load your events. Please try again."))
         .finally(() => setLoading(false));

@@ -79,7 +79,7 @@ export default function CreateEventPage() {
         featured: form.featured,
         createdBy: user.id,
       };
-      await createEvent(req);
+      await createEvent(req, user.token);
       setSuccess(true);
       setForm(empty);
     } catch (err) {
